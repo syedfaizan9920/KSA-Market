@@ -1,19 +1,14 @@
-# Use an official Nginx runtime as a base image
-FROM nginx:alpine
+# Use an official Python runtime as a base image
+FROM python:3.9-slim
 
 # Set the working directory in the container
-WORKDIR /usr/share/nginx/html
+WORKDIR /app
 
-# Copy the static HTML files and assets (CSS, images) from your local machine to the working directory in the container
-COPY index.html .
-COPY styles.css .
-COPY flipkart_logo.png .
-COPY product_image1.jpg .
-COPY product_image2.jpg .
-COPY product_image3.jpg .
+# Copy the entire current directory contents into the container at /app
+COPY . .
 
-# Expose port 80 to allow external access
-EXPOSE 80
+# Expose port 8000 to allow external access
+EXPOSE 8000
 
-# Start Nginx server when the container launches
-CMD ["nginx", "-g", "daemon off;"]
+# Run Python's built-in HTTP server for serving static content
+CMD ["python", "-m", "http.server", "8000"]
