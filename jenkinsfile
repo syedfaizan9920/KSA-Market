@@ -23,7 +23,7 @@ pipeline {
             steps {
                 script {
                     // Deploy your application to Minikube
-                    sh 'kubectl apply -f path/to/your/kubernetes/config.yml'
+                    sh 'kubectl apply -f config.yml'
                 }
             }
         }
@@ -32,7 +32,7 @@ pipeline {
             steps {
                 script {
                     // Run your tests
-                    sh 'kubectl exec -it <your-pod-name> -- <your-test-command>'
+                    sh 'kubectl exec -it pod.yaml'
                 }
             }
         }
@@ -51,8 +51,7 @@ pipeline {
         always {
             // Clean up resources
             script {
-                sh 'kubectl delete -f path/to/your/kubernetes/config.yml'
-                sh 'minikube delete'
+                sh 'kubectl delete -f config.yml'
             }
         }
     }
