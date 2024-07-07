@@ -1,47 +1,39 @@
 pipeline {
     agent any
 
-    environment {
-        // Define environment variables if needed
-        KUBECONFIG = '/home/jenkins/.kube/config'
-    }
-
     stages {
-        stage('Setup Minikube') {
+        stage('Check Docker Version') {
             steps {
                 script {
-                    // Start Minikube
-                    sh 'minikube start'
-                    
-                    // Set kubectl context to minikube
-                    sh 'kubectl config use-context minikube'
+                    // Check Docker version
+                    sh 'docker --version'
                 }
             }
         }
 
-        stage('Deploy Application') {
+        stage('Run Hello World Container') {
             steps {
                 script {
-                    // Deploy your application to Minikube
-                    sh 'kubectl apply -f config.yml'
+                    // Run a simple Docker container
+                    sh 'docker run hello-world'
                 }
             }
         }
 
-        stage('Run Tests') {
+        stage('List Running Containers') {
             steps {
                 script {
-                    // Run your tests
-                    sh 'kubectl exec -it pod.yaml'
+                    // List running Docker containers
+                    sh 'docker ps'
                 }
             }
         }
 
-        stage('Teardown Minikube') {
+        stage('Cleanup') {
             steps {
                 script {
-                    // Stop Minikube
-                    sh 'minikube stop'
+                    // Remove all stopped containers
+                    sh 'docker container prune -f'
                 }
             }
         }
@@ -49,9 +41,9 @@ pipeline {
 
     post {
         always {
-            // Clean up resources
             script {
-                sh 'kubectl delete -f config.yml'
+                // Ensure no containers are left running after the test
+                sh 'docker rm -f $(docker ps -a -q) || true'
             }
         }
     }
